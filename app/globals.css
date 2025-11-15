@@ -88,3 +88,35 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Pricing Card Animations */
+@layer components {
+  .pricing-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .pricing-card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(59, 130, 246, 0.1);
+  }
+  
+  .feature-hover {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .feature-hover:hover {
+    transform: translateX(8px);
+    color: rgb(37, 99, 235);
+  }
+  
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+}

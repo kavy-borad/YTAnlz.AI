@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Shield, LogOut, Users, DollarSign, TrendingUp, Calendar, Crown, Play, Trash2, Download } from 'lucide-react'
+import { Shield, LogOut, Users, DollarSign, TrendingUp, Calendar, Crown, Play, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from "next/link"
 
@@ -71,12 +71,6 @@ export default function AdminDashboard() {
   }
 
   const handleDeleteUser = (userId: string, username: string) => {
-    // Protect admin users from deletion
-    if (username === 'Kavy.Borad' || users.find(u => u.id === userId)?.isAdmin) {
-      alert('Admin users cannot be deleted!')
-      return
-    }
-
     if (window.confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone.`)) {
       // Remove user from localStorage
       const updatedUsers = users.filter(user => user.id !== userId)
@@ -101,55 +95,6 @@ export default function AdminDashboard() {
       
       alert(`User "${username}" has been deleted successfully.`)
     }
-  }
-
-  const handleExportUsers = () => {
-    if (users.length === 0) {
-      alert('No users data to export!')
-      return
-    }
-
-    // Create export data with formatted information
-    const exportData = {
-      exportDate: new Date().toISOString(),
-      totalUsers: users.length,
-      stats: {
-        freeUsers: users.filter((u: any) => u.plan === 'free' || !u.plan).length,
-        proUsers: users.filter((u: any) => u.plan === 'pro').length,
-        enterpriseUsers: users.filter((u: any) => u.plan === 'enterprise').length
-      },
-      users: users.map(user => ({
-        id: user.id,
-        username: user.username,
-        email: user.email || 'N/A',
-        password: user.password || 'N/A',
-        plan: user.plan || 'free',
-        attemptsRemaining: user.attemptsRemaining || 0,
-        createdAt: user.createdAt || 'N/A',
-        subscriptionDate: user.subscriptionDate || 'Not subscribed',
-        lastLogin: user.lastLogin || 'Never logged in',
-        lastUsedDate: user.lastUsedDate || 'Never used'
-      }))
-    }
-
-    // Convert to JSON string
-    const jsonString = JSON.stringify(exportData, null, 2)
-    
-    // Create blob and download
-    const blob = new Blob([jsonString], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    
-    // Generate filename with current date
-    const currentDate = new Date().toISOString().split('T')[0]
-    a.href = url
-    a.download = `users_export_${currentDate}.json`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-    
-    alert(`Successfully exported ${users.length} users data to JSON file!`)
   }
 
   const getPlanBadge = (plan: string) => {
@@ -178,7 +123,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
       {/* Header */}
       <header className="bg-white shadow-sm border-b-2 border-purple-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -188,13 +133,6 @@ export default function AdminDashboard() {
               <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Button 
-                onClick={handleExportUsers}
-                variant="outline"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export Users
-              </Button>
               <Link href="/">
                 <Button variant="outline">
                   <Play className="w-4 h-4 mr-2" />
@@ -246,38 +184,40 @@ export default function AdminDashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{stats.totalUsers}</div>
-              <p className="text-xs text-muted-foreground">
-                Free: {stats.freeUsers} | Pro: {stats.proUsers} | Enterprise: {stats.enterpriseUsers}
-              </p>
+              <div className="text-2xl font-bold">{stats.totalUsers}</div>
+              <p className="text-xs text-muted-foreground">Registered users</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">This Month</CardTitle>
+              <CardTitle className="text-sm font-medium">Plan Distribution</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                {new Date().toLocaleString('default', { month: 'long' })}
+              <div className="space-y-1">
+                <div className="flex justify-between text-sm">
+                  <span>Free:</span>
+                  <span>{stats.freeUsers}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Pro:</span>
+                  <span className="text-blue-600 font-medium">{stats.proUsers}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Enterprise:</span>
+                  <span className="text-purple-600 font-medium">{stats.enterpriseUsers}</span>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">Current month overview</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Main Content */}
+        {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-4">
-          <TabsList className="bg-white border-2 border-purple-200">
-            <TabsTrigger value="users" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-              <Users className="w-4 h-4 mr-2" />
-              All Users ({stats.totalUsers})
-            </TabsTrigger>
-            <TabsTrigger value="payments" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-              <DollarSign className="w-4 h-4 mr-2" />
-              Payment History ({payments.length})
-            </TabsTrigger>
+          <TabsList>
+            <TabsTrigger value="users">Users Management</TabsTrigger>
+            <TabsTrigger value="payments">Payment History</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
@@ -293,7 +233,6 @@ export default function AdminDashboard() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Username</TableHead>
-                      <TableHead>Email</TableHead>
                       <TableHead>Plan</TableHead>
                       <TableHead>Attempts Remaining</TableHead>
                       <TableHead>Joined Date</TableHead>
@@ -305,7 +244,6 @@ export default function AdminDashboard() {
                     {users.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.username}</TableCell>
-                        <TableCell className="text-gray-600">{user.email || 'N/A'}</TableCell>
                         <TableCell>{getPlanBadge(user.plan || 'free')}</TableCell>
                         <TableCell>
                           {user.plan === 'enterprise' ? 'Unlimited' : user.attemptsRemaining || 0}
@@ -315,22 +253,15 @@ export default function AdminDashboard() {
                           {user.subscriptionDate ? formatDate(user.subscriptionDate) : 'N/A'}
                         </TableCell>
                         <TableCell>
-                          {user.username === 'Kavy.Borad' || user.isAdmin ? (
-                            <Badge className="bg-purple-600 text-white">
-                              <Shield className="w-3 h-3 mr-1" />
-                              Admin
-                            </Badge>
-                          ) : (
-                            <Button 
-                              variant="destructive" 
-                              size="sm"
-                              onClick={() => handleDeleteUser(user.id, user.username)}
-                              className="bg-red-500 hover:bg-red-600 text-white"
-                            >
-                              <Trash2 className="w-4 h-4 mr-1" />
-                              Delete
-                            </Button>
-                          )}
+                          <Button 
+                            variant="destructive" 
+                            size="sm"
+                            onClick={() => handleDeleteUser(user.id, user.username)}
+                            className="bg-red-500 hover:bg-red-600 text-white"
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -357,24 +288,35 @@ export default function AdminDashboard() {
                       <TableHead>Amount</TableHead>
                       <TableHead>Payment Date</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Stripe Session</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {payments.map((payment, index) => (
-                      <TableRow key={index}>
+                    {payments.map((payment) => (
+                      <TableRow key={payment.id}>
                         <TableCell className="font-medium">{payment.username}</TableCell>
                         <TableCell>{getPlanBadge(payment.plan)}</TableCell>
-                        <TableCell className="text-green-600 font-semibold">
+                        <TableCell className="font-medium text-green-600">
                           {formatCurrency(payment.amount)}
                         </TableCell>
                         <TableCell>{formatDate(payment.date)}</TableCell>
                         <TableCell>
-                          <Badge className="bg-green-500 text-white">Completed</Badge>
+                          <Badge className="bg-green-500 text-white">
+                            {payment.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {payment.stripeSessionId.substring(0, 20)}...
                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
+                {payments.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No payments recorded yet
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -383,3 +325,4 @@ export default function AdminDashboard() {
     </div>
   )
 }
+

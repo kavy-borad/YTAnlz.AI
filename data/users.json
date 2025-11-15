@@ -1,0 +1,32 @@
+[
+  {
+    "id": "user-1",
+    "username": "kavy.borad",
+    "email": "kavy@example.com",
+    "password": "hashedpassword123",
+    "plan": "free",
+    "attemptsRemaining": 4,
+    "createdAt": "2025-09-16T15:41:00.000Z",
+    "subscriptionDate": null
+  },
+  {
+    "id": "user-2", 
+    "username": "isha.radadiya",
+    "email": "isha@example.com",
+    "password": "hashedpassword456",
+    "plan": "free",
+    "attemptsRemaining": 4,
+    "createdAt": "2025-09-17T10:51:00.000Z",
+    "subscriptionDate": null
+  },
+  {
+    "id": "user-3",
+    "username": "radhika",
+    "email": "radhika@example.com", 
+    "password": "hashedpassword789",
+    "plan": "free",
+    "attemptsRemaining": 4,
+    "createdAt": "2025-09-24T14:56:00.000Z",
+    "subscriptionDate": null
+  }
+]

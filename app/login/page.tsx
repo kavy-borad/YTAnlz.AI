@@ -34,12 +34,16 @@ export default function LoginPage() {
       // Ensure user has a plan set
       if (!user.plan) {
         user.plan = 'free'
-        // Update the user in the users array
-        const userIndex = users.findIndex((u: any) => u.username === username)
-        if (userIndex !== -1) {
-          users[userIndex] = user
-          localStorage.setItem('users', JSON.stringify(users))
-        }
+      }
+      
+      // Update lastLogin
+      user.lastLogin = new Date().toISOString()
+      
+      // Update the user in the users array
+      const userIndex = users.findIndex((u: any) => u.username === username)
+      if (userIndex !== -1) {
+        users[userIndex] = user
+        localStorage.setItem('users', JSON.stringify(users))
       }
       
       // Set current user
@@ -55,10 +59,10 @@ export default function LoginPage() {
     setAdminError('')
 
     // Check admin credentials
-    if (adminUsername === 'Shrushti.vachhani' && adminPassword === 'Shrushti@000') {
+    if (adminUsername === 'Kavy.borad' && adminPassword === 'Kavy@1234') {
       // Set admin session
       localStorage.setItem('adminUser', JSON.stringify({ 
-        username: 'Shrushti.vachhani', 
+        username: 'Kavy.borad',     
         role: 'admin',
         loginTime: new Date().toISOString()
       }))
@@ -133,6 +137,12 @@ export default function LoginPage() {
                   </Button>
                 </form>
                 
+                <div className="mt-4 text-center">
+                  <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                    Forgot your password?
+                  </Link>
+                </div>
+                
                 <div className="mt-6 text-center">
                   <p className="text-sm text-gray-600">
                     Don't have an account?{' '}
@@ -180,6 +190,12 @@ export default function LoginPage() {
                     Admin Login
                   </Button>
                 </form>
+                
+                <div className="mt-4 text-center">
+                  <p className="text-xs text-gray-500">
+                    Admin account recovery? Contact support.
+                  </p>
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>

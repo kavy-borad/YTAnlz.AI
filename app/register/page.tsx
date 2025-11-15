@@ -6,17 +6,29 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Play } from 'lucide-react'
+import { Play, Check, X } from 'lucide-react'
 import Link from "next/link"
 import { useRouter } from 'next/navigation'
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const router = useRouter()
+
+  // Password validation states
+  const passwordValidations = {
+    minLength: password.length >= 8,
+    hasUpperCase: /[A-Z]/.test(password),
+    hasLowerCase: /[a-z]/.test(password),
+    hasNumber: /[0-9]/.test(password),
+    hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+  }
+
+  const isPasswordValid = Object.values(passwordValidations).every(Boolean)
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,8 +46,16 @@ export default function RegisterPage() {
       return
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long')
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address')
+      return
+    }
+
+    // Enhanced password validation
+    if (!isPasswordValid) {
+      setError('Password does not meet all requirements')
       return
     }
 
@@ -48,12 +68,19 @@ export default function RegisterPage() {
       return
     }
 
-    // Create new user with 5 free attempts and free plan
+    // Check if email already exists
+    if (users.find((u: any) => u.email === email)) {
+      setError('Email already exists')
+      return
+    }
+
+    // Create new user with 10 free attempts and free plan
     const newUser = {
       id: Date.now(),
       username,
+      email,
       password,
-      attemptsRemaining: 5,
+      attemptsRemaining: 10,
       plan: 'free', // Explicitly set to free plan
       createdAt: new Date().toISOString(),
       lastUsedDate: new Date().toDateString()
@@ -88,7 +115,7 @@ export default function RegisterPage() {
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Create your account</CardTitle>
             <CardDescription>
-              Get started with 5 free transcript analyses
+              Get started with 10 free transcript analyses
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -118,6 +145,18 @@ export default function RegisterPage() {
               </div>
               
               <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -127,6 +166,30 @@ export default function RegisterPage() {
                   placeholder="Create a password"
                   required
                 />
+                {password && (
+                  <div className="mt-3 space-y-1 text-sm">
+                    <div className={`flex items-center gap-2 ${passwordValidations.minLength ? 'text-green-600' : 'text-red-500'}`}>
+                      {passwordValidations.minLength ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                      <span>At least 8 characters</span>
+                    </div>
+                    <div className={`flex items-center gap-2 ${passwordValidations.hasUpperCase ? 'text-green-600' : 'text-red-500'}`}>
+                      {passwordValidations.hasUpperCase ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                      <span>One uppercase letter</span>
+                    </div>
+                    <div className={`flex items-center gap-2 ${passwordValidations.hasLowerCase ? 'text-green-600' : 'text-red-500'}`}>
+                      {passwordValidations.hasLowerCase ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                      <span>One lowercase letter</span>
+                    </div>
+                    <div className={`flex items-center gap-2 ${passwordValidations.hasNumber ? 'text-green-600' : 'text-red-500'}`}>
+                      {passwordValidations.hasNumber ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                      <span>One number</span>
+                    </div>
+                    <div className={`flex items-center gap-2 ${passwordValidations.hasSpecialChar ? 'text-green-600' : 'text-red-500'}`}>
+                      {passwordValidations.hasSpecialChar ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                      <span>One special character (!@#$%^&*...)</span>
+                    </div>
+                  </div>
+                )}
               </div>
               
               <div className="space-y-2">
