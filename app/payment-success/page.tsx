@@ -1,14 +1,14 @@
 'use client'
 
 export const dynamic = "force-dynamic";
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, Loader2 } from 'lucide-react'
 import Link from "next/link"
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isProcessing, setIsProcessing] = useState(true)
@@ -117,5 +117,17 @@ export default function PaymentSuccessPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50">
+        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   )
 }
