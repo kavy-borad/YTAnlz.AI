@@ -55,6 +55,7 @@ cd YTAnlz.AI
 
 # Install dependencies
 npm install
+<<<<<<< HEAD
 
 # Run development server
 npm run dev
@@ -161,3 +162,57 @@ For support, email kavypate0101@gmail.com or open an issue on GitHub.
 ---
 
 Made with ❤️ by Kavy Patel
+=======
+# or
+pnpm install
+
+# Run development server
+npm run dev
+# or
+pnpm dev
+
+```
+Environment Variables:
+GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+
+Project Structure:
+YTAnlz.AI/
+├── app/
+│   ├── api/
+│   │   └── chat/
+│   │       └── route.ts          # AI chat endpoint
+│   ├── dashboard/
+│   │   └── page.tsx              # Dashboard with collections
+│   ├── login/
+│   │   └── page.tsx              # Login page
+│   ├── register/
+│   │   └── page.tsx              # Signup with validation
+│   └── pricing/
+│       └── page.tsx              # Subscription plans
+├── components/
+│   ├── payment-modal.tsx         # Payment UI modal
+│   └── ui/                       # UI components
+├── public/                       # Static assets
+└── package.json
+
+📄 License
+This project is licensed under the MIT License.
+
+👨‍💻 Author
+Kavy Patel
+
+GitHub: @kavy-borad
+Email: kavypate0101@gmail.com
+
+🙏 Acknowledgments
+Google Generative AI for powerful AI capabilities
+Next.js team for the amazing framework
+Open source community
+
+📞 Support
+For support, email kavypate0101@gmail.com or open an issue on GitHub.
+
+Made with ❤️ by Kavy Patel
+
+
+>>>>>>> d90c637ece1ab8f506f10e93164467d580c1139f
